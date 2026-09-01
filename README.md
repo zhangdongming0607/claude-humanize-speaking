@@ -42,20 +42,23 @@ AI 在长期项目里很容易学会项目内部的简称，然后直接把这�
 
 ## 安装
 
-发布到 PyPI 后，推荐直接运行：
+不需要 PyPI 账号。`uv` 可以直接从 GitHub 的版本标签运行：
 
 ```bash
-uvx claude-humanize-speaking install
+uvx --from \
+  git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install
 ```
 
 也可以长期安装命令行工具：
 
 ```bash
-pipx install claude-humanize-speaking
+pipx install \
+  git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0
 claude-humanize-speaking install
 ```
 
-仓库保持 private、尚未发布到 PyPI 时，可以从本地源码验证：
+从本地源码安装：
 
 ```bash
 git clone https://github.com/zhangdongming0607/claude-humanize-speaking.git
@@ -67,8 +70,10 @@ claude-humanize-speaking install
 也可以只安装一个工具：
 
 ```bash
-uvx claude-humanize-speaking install --target claude
-uvx claude-humanize-speaking install --target cursor
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install --target claude
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install --target cursor
 ```
 
 ### Claude Code
@@ -95,11 +100,13 @@ uvx claude-humanize-speaking install --target cursor
 
 ```bash
 # 使用本机 Ollama，聊天内容不离开电脑
-uvx claude-humanize-speaking install --target claude --with-claudish \
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install --target claude --with-claudish \
   --provider ollama
 
 # 或复用已登录的 Codex CLI；回答会发送给对应的云端服务
-uvx claude-humanize-speaking install --target claude --with-claudish \
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install --target claude --with-claudish \
   --provider codex
 ```
 
@@ -154,7 +161,8 @@ Remote Rule 是项目级规则，不是全局规则。
 ## 卸载
 
 ```bash
-uvx claude-humanize-speaking uninstall
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking uninstall
 ```
 
 卸载脚本只删除内容仍与本仓库一致的文件；如果你修改过文件，它会保留。
@@ -187,23 +195,15 @@ make test
 
 ## 发布
 
-首次发布前先配置下面的 PyPI Trusted Publisher。之后更新
-`src/claude_humanize_speaking/__init__.py` 中的 `__version__`，提交改动，并确保
-GitHub CLI 已登录、当前位于 `main`，然后执行：
+更新 `src/claude_humanize_speaking/__init__.py` 中的 `__version__`，提交改动，
+并确保 GitHub CLI 已登录、当前位于 `main`，然后执行：
 
 ```bash
 make release VERSION=0.1.0
 ```
 
-发布脚本会依次运行测试、构建 wheel 和源码包、创建 `v0.1.0` 标签、推送标签并
-创建 GitHub Release。Release 会触发 PyPI Trusted Publishing 工作流。
-
-PyPI Trusted Publisher 的配置是：
-
-- Owner：`zhangdongming0607`
-- Repository：`claude-humanize-speaking`
-- Workflow：`publish.yml`
-- Environment：`pypi`
+发布脚本会依次运行测试、构建 wheel 和源码包、创建版本标签，并把两个安装包上传
+到 GitHub Release。整个过程不访问 PyPI。
 
 任何一步失败都会停止，不会跳过测试。已存在的版本号不会被覆盖。
 

@@ -43,21 +43,23 @@ only when `/humanize` is invoked.
 
 ## Install
 
-After the package is published to PyPI:
+No PyPI account is required. Run a tagged version directly from GitHub:
 
 ```bash
-uvx claude-humanize-speaking install
+uvx --from \
+  git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install
 ```
 
 Or install the command permanently:
 
 ```bash
-pipx install claude-humanize-speaking
+pipx install \
+  git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0
 claude-humanize-speaking install
 ```
 
-While the repository remains private and the package is not published, test it
-from a local checkout:
+Install from a local checkout:
 
 ```bash
 uv tool install .
@@ -67,8 +69,10 @@ claude-humanize-speaking install
 Install only one integration:
 
 ```bash
-uvx claude-humanize-speaking install --target claude
-uvx claude-humanize-speaking install --target cursor
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install --target claude
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install --target cursor
 ```
 
 ### Claude Code
@@ -97,11 +101,13 @@ upstream plugin through Claude Code and supplies a shorter rewrite prompt:
 
 ```bash
 # Local Ollama: conversation content stays on the machine
-uvx claude-humanize-speaking install --target claude --with-claudish \
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install --target claude --with-claudish \
   --provider ollama
 
 # Or reuse a logged-in Codex CLI; responses go to its cloud service
-uvx claude-humanize-speaking install --target claude --with-claudish \
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking install --target claude --with-claudish \
   --provider codex
 ```
 
@@ -158,7 +164,8 @@ inside the text or silently continue the development work being described.
 ## Uninstall
 
 ```bash
-uvx claude-humanize-speaking uninstall
+uvx --from git+https://github.com/zhangdongming0607/claude-humanize-speaking@v0.1.0 \
+  claude-humanize-speaking uninstall
 ```
 
 The uninstaller removes a managed file only if it is still identical to the
@@ -190,17 +197,16 @@ Cursor settings.
 
 ## Release
 
-After configuring PyPI Trusted Publishing, update `__version__` in
-`src/claude_humanize_speaking/__init__.py`, commit it, and run:
+Update `__version__` in `src/claude_humanize_speaking/__init__.py`, commit it,
+and run:
 
 ```bash
 make release VERSION=0.1.0
 ```
 
 The command runs tests, builds the wheel and source archive, creates and pushes
-the version tag, and creates a GitHub Release. The release triggers
-`.github/workflows/publish.yml`, which publishes to PyPI without a stored API
-token.
+the version tag, and uploads both artifacts to a GitHub Release. It does not
+contact PyPI.
 
 ## License
 

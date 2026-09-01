@@ -63,6 +63,12 @@ def main() -> None:
 
     run(sys.executable, "tests/test_install.py")
     run("uv", "build")
+    artifacts = sorted((ROOT / "dist").glob(f"*{args.version}*"))
+    if len(artifacts) != 2:
+        raise SystemExit(
+            f"Expected wheel and source archive for {args.version}, "
+            f"found {len(artifacts)} files"
+        )
 
     tag = f"v{args.version}"
     existing = subprocess.run(
@@ -82,6 +88,7 @@ def main() -> None:
         "release",
         "create",
         tag,
+        *(str(path) for path in artifacts),
         "--verify-tag",
         "--title",
         f"Claude Humanize Speaking {tag}",
