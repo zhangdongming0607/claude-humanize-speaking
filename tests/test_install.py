@@ -15,7 +15,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 INSTALLER = ROOT / "scripts" / "install.py"
-STYLE = ROOT / "claude" / "output-styles" / "plain-language.md"
+PRODUCT_NAME = "claude-humanize-speaking"
+STYLE = ROOT / "claude" / "output-styles" / f"{PRODUCT_NAME}.md"
 SKILL = ROOT / "skills" / "humanize" / "SKILL.md"
 
 
@@ -47,7 +48,10 @@ class InstallerTest(unittest.TestCase):
             result = self.run_installer(home)
             self.assertIn("Cursor's /humanize skill is installed globally", result.stdout)
             self.assertEqual(
-                (home / ".claude/output-styles/plain-language.md").read_bytes(),
+                (
+                    home
+                    / ".claude/output-styles/claude-humanize-speaking.md"
+                ).read_bytes(),
                 STYLE.read_bytes(),
             )
             self.assertEqual(
@@ -59,12 +63,15 @@ class InstallerTest(unittest.TestCase):
                 SKILL.read_bytes(),
             )
             settings = json.loads(settings_path.read_text(encoding="utf-8"))
-            self.assertEqual(settings["outputStyle"], "plain-language")
+            self.assertEqual(settings["outputStyle"], PRODUCT_NAME)
             self.assertEqual(settings["model"], "opus")
 
             self.run_installer(home, "--uninstall")
             self.assertFalse(
-                (home / ".claude/output-styles/plain-language.md").exists()
+                (
+                    home
+                    / ".claude/output-styles/claude-humanize-speaking.md"
+                ).exists()
             )
             self.assertFalse((home / ".claude/skills/humanize/SKILL.md").exists())
             self.assertFalse((home / ".cursor/skills/humanize/SKILL.md").exists())
@@ -89,7 +96,10 @@ class InstallerTest(unittest.TestCase):
                 original_state,
             )
             self.assertTrue(
-                (home / ".claude/output-styles/plain-language.md").exists()
+                (
+                    home
+                    / ".claude/output-styles/claude-humanize-speaking.md"
+                ).exists()
             )
 
     def test_invalid_claude_settings_are_not_overwritten(self) -> None:
@@ -106,7 +116,10 @@ class InstallerTest(unittest.TestCase):
             self.assertIn("Refusing to overwrite invalid JSON", result.stderr)
             self.assertEqual(settings_path.read_text(encoding="utf-8"), "{not json")
             self.assertFalse(
-                (home / ".claude/output-styles/plain-language.md").exists()
+                (
+                    home
+                    / ".claude/output-styles/claude-humanize-speaking.md"
+                ).exists()
             )
             self.assertFalse((home / ".claude/skills/humanize/SKILL.md").exists())
 
@@ -121,7 +134,7 @@ class InstallerTest(unittest.TestCase):
             parsed = urllib.parse.urlparse(link)
             query = urllib.parse.parse_qs(parsed.query)
             self.assertEqual(parsed.netloc, "cursor.com")
-            self.assertEqual(query["name"], ["Plain language"])
+            self.assertEqual(query["name"], ["Claude Humanize Speaking"])
             self.assertEqual(query["text"], [printed])
 
 

@@ -58,9 +58,10 @@ python3 scripts/install.py --target cursor
 
 安装脚本会自动：
 
-1. 把 Output Style 安装到 `~/.claude/output-styles/plain-language.md`；
+1. 把 Output Style 安装到 `~/.claude/output-styles/claude-humanize-speaking.md`；
 2. 把 `/humanize` 安装到 `~/.claude/skills/humanize/`；
-3. 在 `~/.claude/settings.json` 中设置 `"outputStyle": "plain-language"`。
+3. 在 `~/.claude/settings.json` 中设置
+   `"outputStyle": "claude-humanize-speaking"`。
 
 已有 Claude Code 会话执行 `/clear` 后重新载入；新会话直接生效。
 
@@ -90,7 +91,8 @@ python3 scripts/install.py --cursor-deeplink
 
 如果只想给某个项目启用，可以在 Cursor 中选择
 **Remote Rule (GitHub)**，填入本仓库地址。Cursor 会读取
-`cursor/rules/plain-language.mdc`。Remote Rule 是项目级规则，不是全局规则。
+`cursor/rules/claude-humanize-speaking.mdc`。Remote Rule 是项目级规则，
+不是全局规则。
 
 ## 使用 `/humanize`
 

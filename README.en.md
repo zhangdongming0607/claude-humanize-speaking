@@ -59,9 +59,9 @@ python3 scripts/install.py --target cursor
 The installer:
 
 1. installs the Output Style at
-   `~/.claude/output-styles/plain-language.md`;
+   `~/.claude/output-styles/claude-humanize-speaking.md`;
 2. installs `/humanize` at `~/.claude/skills/humanize/`;
-3. sets `"outputStyle": "plain-language"` in
+3. sets `"outputStyle": "claude-humanize-speaking"` in
    `~/.claude/settings.json`.
 
 Run `/clear` in an existing Claude Code session to reload the style. New
@@ -93,8 +93,8 @@ python3 scripts/install.py --cursor-deeplink
 
 To enable the rule only in one project, choose
 **Remote Rule (GitHub)** in Cursor and enter this repository's URL. Cursor will
-import `cursor/rules/plain-language.mdc`. Remote rules are project-scoped, not
-global.
+import `cursor/rules/claude-humanize-speaking.mdc`. Remote rules are
+project-scoped, not global.
 
 ## Use `/humanize`
 

@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install plain-language rules for Claude Code and Cursor without dependencies."""
+"""Install Claude Humanize Speaking for Claude Code and Cursor."""
 
 from __future__ import annotations
 
@@ -13,10 +13,11 @@ from pathlib import Path
 
 
 ROOT = Path(__file__).resolve().parent.parent
-STYLE = ROOT / "claude" / "output-styles" / "plain-language.md"
+PRODUCT_NAME = "claude-humanize-speaking"
+STYLE = ROOT / "claude" / "output-styles" / f"{PRODUCT_NAME}.md"
 SKILL = ROOT / "skills" / "humanize" / "SKILL.md"
-CURSOR_RULE = ROOT / "cursor" / "rules" / "plain-language.mdc"
-STATE_DIR = Path.home() / ".config" / "claude-humanize-speaking"
+CURSOR_RULE = ROOT / "cursor" / "rules" / f"{PRODUCT_NAME}.mdc"
+STATE_DIR = Path.home() / ".config" / PRODUCT_NAME
 STATE_FILE = STATE_DIR / "state.json"
 
 
@@ -81,11 +82,11 @@ def install_claude(state: dict) -> None:
     claude_state = state.setdefault("claude", {})
     if "previous_output_style" not in claude_state:
         claude_state["previous_output_style"] = settings.get("outputStyle")
-    if settings.get("outputStyle") != "plain-language":
+    if settings.get("outputStyle") != PRODUCT_NAME:
         if settings_path.exists():
             saved = backup(settings_path)
             print(f"Backed up Claude settings: {saved}")
-        settings["outputStyle"] = "plain-language"
+        settings["outputStyle"] = PRODUCT_NAME
         write_json(settings_path, settings)
         print(f"Activated Claude output style in: {settings_path}")
     else:
@@ -125,7 +126,7 @@ def uninstall_claude(state: dict) -> None:
 
     settings = read_json(settings_path, {})
     previous = state.get("claude", {}).get("previous_output_style")
-    if settings.get("outputStyle") == "plain-language":
+    if settings.get("outputStyle") == PRODUCT_NAME:
         if settings_path.exists():
             saved = backup(settings_path)
             print(f"Backed up Claude settings: {saved}")
@@ -174,7 +175,7 @@ def main() -> None:
         return
     if args.cursor_deeplink:
         query = urllib.parse.urlencode(
-            {"name": "Plain language", "text": cursor_rule_body()}
+            {"name": "Claude Humanize Speaking", "text": cursor_rule_body()}
         )
         print(f"https://cursor.com/link/rule?{query}")
         return
