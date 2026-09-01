@@ -43,19 +43,32 @@ only when `/humanize` is invoked.
 
 ## Install
 
-Python 3.9 or later is required. There are no third-party dependencies.
+After the package is published to PyPI:
 
 ```bash
-git clone https://github.com/zhangdongming0607/claude-humanize-speaking.git
-cd claude-humanize-speaking
-python3 scripts/install.py
+uvx claude-humanize-speaking install
+```
+
+Or install the command permanently:
+
+```bash
+pipx install claude-humanize-speaking
+claude-humanize-speaking install
+```
+
+While the repository remains private and the package is not published, test it
+from a local checkout:
+
+```bash
+uv tool install .
+claude-humanize-speaking install
 ```
 
 Install only one integration:
 
 ```bash
-python3 scripts/install.py --target claude
-python3 scripts/install.py --target cursor
+uvx claude-humanize-speaking install --target claude
+uvx claude-humanize-speaking install --target cursor
 ```
 
 ### Claude Code
@@ -84,12 +97,12 @@ upstream plugin through Claude Code and supplies a shorter rewrite prompt:
 
 ```bash
 # Local Ollama: conversation content stays on the machine
-python3 scripts/install.py --target claude --with-claudish \
-  --claudish-provider ollama
+uvx claude-humanize-speaking install --target claude --with-claudish \
+  --provider ollama
 
 # Or reuse a logged-in Codex CLI; responses go to its cloud service
-python3 scripts/install.py --target claude --with-claudish \
-  --claudish-provider codex
+uvx claude-humanize-speaking install --target claude --with-claudish \
+  --provider codex
 ```
 
 Ollama mode requires Ollama and a downloaded model. Restart Claude Code after
@@ -111,20 +124,21 @@ the default writing style once:
 3. Create a rule and paste the output of:
 
 ```bash
-python3 scripts/install.py --print-cursor-rule
+claude-humanize-speaking cursor-rule
 ```
 
 You can also generate Cursor's official rule deeplink. Cursor will still ask
 you to review and confirm the rule:
 
 ```bash
-python3 scripts/install.py --cursor-deeplink
+claude-humanize-speaking cursor-deeplink
 ```
 
 To enable the rule only in one project, choose
 **Remote Rule (GitHub)** in Cursor and enter this repository's URL. Cursor will
-import `cursor/rules/claude-humanize-speaking.mdc`. Remote rules are
-project-scoped, not global.
+import
+`src/claude_humanize_speaking/assets/claude-humanize-speaking.mdc`.
+Remote rules are project-scoped, not global.
 
 ## Use `/humanize`
 
@@ -144,7 +158,7 @@ inside the text or silently continue the development work being described.
 ## Uninstall
 
 ```bash
-python3 scripts/install.py --uninstall
+uvx claude-humanize-speaking uninstall
 ```
 
 The uninstaller removes a managed file only if it is still identical to the
@@ -168,11 +182,25 @@ rewrite provider: `ollama` remains local, while `codex`, `anthropic`, and
 ## Development
 
 ```bash
-python3 tests/test_install.py
+make test
 ```
 
 Tests run with a temporary HOME directory and do not touch real Claude Code or
 Cursor settings.
+
+## Release
+
+After configuring PyPI Trusted Publishing, update `__version__` in
+`src/claude_humanize_speaking/__init__.py`, commit it, and run:
+
+```bash
+make release VERSION=0.1.0
+```
+
+The command runs tests, builds the wheel and source archive, creates and pushes
+the version tag, and creates a GitHub Release. The release triggers
+`.github/workflows/publish.yml`, which publishes to PyPI without a stored API
+token.
 
 ## License
 

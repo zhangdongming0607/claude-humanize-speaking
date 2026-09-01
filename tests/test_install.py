@@ -17,8 +17,9 @@ from typing import Optional
 ROOT = Path(__file__).resolve().parent.parent
 INSTALLER = ROOT / "scripts" / "install.py"
 PRODUCT_NAME = "claude-humanize-speaking"
-STYLE = ROOT / "claude" / "output-styles" / f"{PRODUCT_NAME}.md"
-SKILL = ROOT / "skills" / "humanize" / "SKILL.md"
+ASSETS = ROOT / "src" / "claude_humanize_speaking" / "assets"
+STYLE = ASSETS / f"{PRODUCT_NAME}.md"
+SKILL = ASSETS / "humanize-skill.md"
 
 
 class InstallerTest(unittest.TestCase):
@@ -52,7 +53,7 @@ class InstallerTest(unittest.TestCase):
                 encoding="utf-8",
             )
 
-            result = self.run_installer(home)
+            result = self.run_installer(home, "install")
             self.assertIn("Cursor's /humanize skill is installed globally", result.stdout)
             self.assertEqual(
                 (
@@ -73,7 +74,7 @@ class InstallerTest(unittest.TestCase):
             self.assertEqual(settings["outputStyle"], PRODUCT_NAME)
             self.assertEqual(settings["model"], "opus")
 
-            self.run_installer(home, "--uninstall")
+            self.run_installer(home, "uninstall")
             self.assertFalse(
                 (
                     home
@@ -89,14 +90,14 @@ class InstallerTest(unittest.TestCase):
     def test_cursor_only_uninstall_keeps_claude_state(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             home = Path(directory)
-            self.run_installer(home, "--target", "claude")
+            self.run_installer(home, "install", "--target", "claude")
             state_path = (
                 home / ".config/claude-humanize-speaking/state.json"
             )
             original_state = state_path.read_text(encoding="utf-8")
 
-            self.run_installer(home, "--target", "cursor")
-            self.run_installer(home, "--target", "cursor", "--uninstall")
+            self.run_installer(home, "install", "--target", "cursor")
+            self.run_installer(home, "uninstall", "--target", "cursor")
 
             self.assertEqual(
                 state_path.read_text(encoding="utf-8"),
@@ -117,7 +118,7 @@ class InstallerTest(unittest.TestCase):
             settings_path.write_text("{not json", encoding="utf-8")
 
             result = self.run_installer(
-                home, "--target", "claude", check=False
+                home, "install", "--target", "claude", check=False
             )
             self.assertNotEqual(result.returncode, 0)
             self.assertIn("Refusing to overwrite invalid JSON", result.stderr)
@@ -133,11 +134,11 @@ class InstallerTest(unittest.TestCase):
     def test_cursor_rule_output_and_deeplink(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             home = Path(directory)
-            printed = self.run_installer(home, "--print-cursor-rule").stdout
+            printed = self.run_installer(home, "cursor-rule").stdout
             self.assertTrue(printed.startswith("Reply in the user's language."))
             self.assertNotIn("alwaysApply:", printed)
 
-            link = self.run_installer(home, "--cursor-deeplink").stdout.strip()
+            link = self.run_installer(home, "cursor-deeplink").stdout.strip()
             parsed = urllib.parse.urlparse(link)
             query = urllib.parse.parse_qs(parsed.query)
             self.assertEqual(parsed.netloc, "cursor.com")
@@ -173,10 +174,11 @@ class InstallerTest(unittest.TestCase):
             )
             self.run_installer(
                 home,
+                "install",
                 "--target",
                 "claude",
                 "--with-claudish",
-                "--claudish-provider",
+                "--provider",
                 "anthropic",
                 path_prefix=fake_bin,
             )
@@ -187,9 +189,9 @@ class InstallerTest(unittest.TestCase):
 
             self.run_installer(
                 home,
+                "uninstall",
                 "--target",
                 "claude",
-                "--uninstall",
                 path_prefix=fake_bin,
             )
             restored = json.loads(settings_path.read_text(encoding="utf-8"))

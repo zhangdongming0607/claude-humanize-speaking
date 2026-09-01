@@ -1,0 +1,49 @@
+[build-system]
+requires = ["hatchling>=1.27"]
+build-backend = "hatchling.build"
+
+[project]
+name = "claude-humanize-speaking"
+dynamic = ["version"]
+description = "Make Claude Code and Cursor explain technical work without project slang."
+readme = "README.en.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [
+  { name = "zhangdongming0607" },
+]
+keywords = [
+  "claude-code",
+  "cursor",
+  "plain-language",
+  "ai",
+  "developer-tools",
+]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Software Development",
+]
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/zhangdongming0607/claude-humanize-speaking"
+Repository = "https://github.com/zhangdongming0607/claude-humanize-speaking"
+Issues = "https://github.com/zhangdongming0607/claude-humanize-speaking/issues"
+
+[project.scripts]
+claude-humanize-speaking = "claude_humanize_speaking.cli:main"
+chs = "claude_humanize_speaking.cli:main"
+
+[tool.hatch.version]
+path = "src/claude_humanize_speaking/__init__.py"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/claude_humanize_speaking"]

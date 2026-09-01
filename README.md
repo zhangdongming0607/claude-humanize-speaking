@@ -42,19 +42,33 @@ AI 在长期项目里很容易学会项目内部的简称，然后直接把这�
 
 ## 安装
 
-需要 Python 3.9 或更高版本，不安装第三方依赖。
+发布到 PyPI 后，推荐直接运行：
+
+```bash
+uvx claude-humanize-speaking install
+```
+
+也可以长期安装命令行工具：
+
+```bash
+pipx install claude-humanize-speaking
+claude-humanize-speaking install
+```
+
+仓库保持 private、尚未发布到 PyPI 时，可以从本地源码验证：
 
 ```bash
 git clone https://github.com/zhangdongming0607/claude-humanize-speaking.git
 cd claude-humanize-speaking
-python3 scripts/install.py
+uv tool install .
+claude-humanize-speaking install
 ```
 
 也可以只安装一个工具：
 
 ```bash
-python3 scripts/install.py --target claude
-python3 scripts/install.py --target cursor
+uvx claude-humanize-speaking install --target claude
+uvx claude-humanize-speaking install --target cursor
 ```
 
 ### Claude Code
@@ -81,12 +95,12 @@ python3 scripts/install.py --target cursor
 
 ```bash
 # 使用本机 Ollama，聊天内容不离开电脑
-python3 scripts/install.py --target claude --with-claudish \
-  --claudish-provider ollama
+uvx claude-humanize-speaking install --target claude --with-claudish \
+  --provider ollama
 
 # 或复用已登录的 Codex CLI；回答会发送给对应的云端服务
-python3 scripts/install.py --target claude --with-claudish \
-  --claudish-provider codex
+uvx claude-humanize-speaking install --target claude --with-claudish \
+  --provider codex
 ```
 
 Ollama 模式需要先安装 Ollama 并下载一个模型。安装完成后重启 Claude Code，
@@ -106,19 +120,19 @@ Cursor 的全局 User Rules 由 Cursor 自己管理，官方没有提供普通�
 3. 新建规则，粘贴下面命令打印的内容：
 
 ```bash
-python3 scripts/install.py --print-cursor-rule
+claude-humanize-speaking cursor-rule
 ```
 
 也可以生成 Cursor 官方的规则添加链接。打开链接后仍需在 Cursor 中确认：
 
 ```bash
-python3 scripts/install.py --cursor-deeplink
+claude-humanize-speaking cursor-deeplink
 ```
 
 如果只想给某个项目启用，可以在 Cursor 中选择
 **Remote Rule (GitHub)**，填入本仓库地址。Cursor 会读取
-`cursor/rules/claude-humanize-speaking.mdc`。Remote Rule 是项目级规则，
-不是全局规则。
+`src/claude_humanize_speaking/assets/claude-humanize-speaking.mdc`。
+Remote Rule 是项目级规则，不是全局规则。
 
 ## 使用 `/humanize`
 
@@ -140,7 +154,7 @@ python3 scripts/install.py --cursor-deeplink
 ## 卸载
 
 ```bash
-python3 scripts/install.py --uninstall
+uvx claude-humanize-speaking uninstall
 ```
 
 卸载脚本只删除内容仍与本仓库一致的文件；如果你修改过文件，它会保留。
@@ -166,10 +180,32 @@ Cursor User Rule 是你在界面中确认添加的，因此也需要在
 ## 开发
 
 ```bash
-python3 tests/test_install.py
+make test
 ```
 
 测试会使用临时的 HOME 目录，不会修改真实的 Claude Code 或 Cursor 配置。
+
+## 发布
+
+首次发布前先配置下面的 PyPI Trusted Publisher。之后更新
+`src/claude_humanize_speaking/__init__.py` 中的 `__version__`，提交改动，并确保
+GitHub CLI 已登录、当前位于 `main`，然后执行：
+
+```bash
+make release VERSION=0.1.0
+```
+
+发布脚本会依次运行测试、构建 wheel 和源码包、创建 `v0.1.0` 标签、推送标签并
+创建 GitHub Release。Release 会触发 PyPI Trusted Publishing 工作流。
+
+PyPI Trusted Publisher 的配置是：
+
+- Owner：`zhangdongming0607`
+- Repository：`claude-humanize-speaking`
+- Workflow：`publish.yml`
+- Environment：`pypi`
+
+任何一步失败都会停止，不会跳过测试。已存在的版本号不会被覆盖。
 
 ## 许可证
 
