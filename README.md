@@ -30,12 +30,15 @@ AI 在长期项目里很容易学会项目内部的简称，然后直接把这�
 
 ## 支持范围
 
-| 工具 | 默认表达方式 | 手动翻译已有文字 |
+| 工具 | 默认方式 | 需要更强翻译时 |
 |---|---|---|
-| Claude Code | 全局 Output Style | 全局 `/humanize` Skill |
-| Cursor | 全局 User Rule | 全局 `/humanize` Skill |
+| Claude Code | 很短的全局 Output Style | `/humanize`，或可选的 Claudish 二次翻译 |
+| Cursor | 很短的全局 User Rule | 全局 `/humanize` Skill |
 
 规则默认使用提问者正在使用的语言回答。
+
+默认规则只保留七条核心要求，避免每次请求重复携带很长的术语表。详细分析步骤
+只在调用 `/humanize` 时加入当前请求。
 
 ## 安装
 
@@ -66,6 +69,29 @@ python3 scripts/install.py --target cursor
 已有 Claude Code 会话执行 `/clear` 后重新载入；新会话直接生效。
 
 脚本修改现有文件前会创建带时间戳的备份。
+
+#### 可选：Claudish 二次翻译
+
+如果希望完全不依赖 Claude 第一次回答时遵守表达规则，可以安装
+[gvzdv/claudish-to-english](https://github.com/gvzdv/claudish-to-english)。
+它会在 Claude 回答完成后调用另一个模型，只改写屏幕显示，原始对话记录不变。
+
+本项目不复制 Claudish 的消息处理代码，只通过官方插件安装方式接入，并提供一份
+更短的改写提示：
+
+```bash
+# 使用本机 Ollama，聊天内容不离开电脑
+python3 scripts/install.py --target claude --with-claudish \
+  --claudish-provider ollama
+
+# 或复用已登录的 Codex CLI；回答会发送给对应的云端服务
+python3 scripts/install.py --target claude --with-claudish \
+  --claudish-provider codex
+```
+
+Ollama 模式需要先安装 Ollama 并下载一个模型。安装完成后重启 Claude Code，
+使用 `/claudish append` 同时显示原文和改写，或使用 `/claudish replace`
+只显示改写。任何翻译错误或超时都会保留原回答。
 
 ### Cursor
 
@@ -132,6 +158,10 @@ Cursor User Rule 是你在界面中确认添加的，因此也需要在
 - 不发送遥测；
 - 不调用任何模型 API；
 - 不改变 Claude Code 或 Cursor 的代码执行权限。
+
+以上说明适用于默认规则和 `/humanize`。启用可选 Claudish 后，插件会把完整回答
+交给你选择的二次翻译模型；`ollama` 留在本机，`codex`、`anthropic` 和 `openai`
+会发送到相应的云端服务。
 
 ## 开发
 

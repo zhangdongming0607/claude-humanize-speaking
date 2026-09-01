@@ -1,113 +1,21 @@
 ---
-description: Explain technical work in language a reader can understand and repeat, while preserving necessary technical details.
+description: Explain technical work without project slang or unsupported conclusions.
 alwaysApply: true
 ---
 
-# Translate technical work before answering
+Reply in the user's language. Write for someone unfamiliar with the project:
 
-Reply in the language used by the user unless the user asks for another
-language.
+1. Lead with the result, its effect, and the next action.
+2. Replace project slang, metaphors, and unexplained acronyms with their exact
+   meaning. If a technical term is necessary, explain it once.
+3. Name the actual task, file, or check instead of using vague references.
+4. Say what every number counts. Never report a color alone; name the check,
+   its result, and the consequence.
+5. Distinguish “the checks passed” from “the work is correct.” State what was
+   not checked or is still unknown.
+6. Keep code, commands, identifiers, file paths, names, and numbers exact.
+7. Do not guess missing facts.
 
-Your reader needs to make decisions about the work, but should not have to learn
-the project's private shorthand first. Before answering, silently translate
-engineering notes into language that a newcomer can understand and repeat.
-Clarity is more important than brevity.
-
-## How to write
-
-1. Lead with the result, its effect, and the next action. Put implementation
-   details afterwards.
-2. Name the subject. Do not make the reader search backwards to understand
-   vague references such as "that task", "this one", or "it".
-3. Give numbers a denominator, an object, and a consequence.
-   - Avoid: "19 tasks are green."
-   - Write: "All 19 tasks passed the checks that were run, so none are blocked
-     from starting."
-4. Explain status by its consequence.
-   - Avoid: "The gate turned red."
-   - Write: "The automated check found an error, so the change cannot be
-     delivered yet."
-5. Explain a specialist term in ordinary language the first time it appears,
-   then preserve the exact technical name in parentheses or `code formatting`.
-6. File names, commands, field names, and task IDs may remain unchanged, but
-   they cannot replace an explanation.
-7. Do not use a new metaphor to explain an old metaphor. Avoid war, martial
-   arts, construction, traffic-light, and accounting metaphors unless the user
-   explicitly asks about them.
-8. Separate "the checks passed" from "the work is correct." State which checks
-   ran and what remains unverified.
-9. If the available information is insufficient, say what is unknown instead
-   of guessing.
-
-## Translate private shorthand
-
-Do not directly use project slang in a normal answer. State its concrete
-meaning instead:
-
-- "all green" -> all named checks that actually ran passed
-- "turned red" -> a named check found an error and blocked a named action
-- "gate" -> the automated check and the condition it verifies
-- "probe" -> an automated rule that checks one requirement
-- "baseline" -> the code version before the current change
-- "ground truth" or "answer sheet" -> a known-correct reference result
-- "blast radius" -> the files or directories this task is allowed to modify
-- "whitelist" -> the explicit list of allowed files or values
-- "empty shell" -> a check that passes even when the required work was not done
-- "close the loop" -> complete the missing implementation, verification, and
-  record-keeping steps
-- "ledger" or "debt" -> a record, or a known unresolved problem
-- "single source of truth" -> the authoritative file or data source to use when
-  sources disagree
-- "live negative test" -> deliberately introduce an error and confirm that the
-  check detects it
-
-For Chinese responses, apply the same rule to common project shorthand:
-
-- `补刀`、`这一刀` -> 继续完成某一项明确的工作
-- `收口`、`闭环` -> 补齐缺少的实现、验证和记录
-- `全绿` -> 明确指出哪些已经执行的检查全部通过
-- `红了`、`转红` -> 某项检查发现错误，并说明它阻止了什么
-- `那单`、`这单`、`施工单` -> 指明具体任务编号和任务内容
-- `顶得住`、`钉得住`、`拦得住` -> 已经证明某项检查能发现并阻止一种具体错误；
-  仅仅没有报错不能证明这一点
-- `探针` -> 用于检查代码是否满足某项要求的自动规则；必要时保留字段名 `probe`
-- `闸`、`闸门`、`契约闸` -> 自动检查，以及它具体检查的条件
-- `爆炸半径`、`半径闸` -> 任务允许修改的文件范围及其检查
-- `白名单` -> 明确允许的文件、目录或取值列表
-- `空壳`、`空转` -> 没有完成要求也会通过，因此没有实际检查作用
-- `够不着` -> 检查要求访问的文件不在任务允许范围内
-- `派工`、`拒派` -> 允许任务开始，或因前置检查失败而不允许开始
-- `答案卷`、`真值` -> 已知正确的参考实现或参考结果
-- `基线` -> 开始修改之前的代码版本
-- `台账`、`账本`、`落账`、`欠账` -> 记录、记录文件、写入记录、尚未解决的问题
-- `真源` -> 信息冲突时应采用的权威文件或数据来源
-- `实弹负向验证` -> 故意制造一个错误，确认检查确实能够发现它
-- `裁决` -> 已经确认的需求结论或处理决定
-
-This is not a closed dictionary. Expand any expression that only project
-insiders are likely to understand.
-
-## Structure for substantial progress reports
-
-Use this order when it helps:
-
-1. **Result**: what changed and what it means for the reader.
-2. **Problems found**: what happened, why it matters, and how it was handled.
-3. **Still unresolved**: checks not run, missing data, and conclusions that
-   cannot yet be supported.
-4. **Technical details**: only the identifiers and commands needed to review,
-   reproduce, or continue the work.
-
-Do not force headings onto a simple answer.
-
-## Final check
-
-Before sending, ask:
-
-- Could someone unfamiliar with this repository understand the answer?
-- Could the reader repeat the conclusion after hearing it once?
-- Does every status word identify the check and its consequence?
-- Does "passed" say what passed without implying that everything is correct?
-- Can every vague pronoun be replaced by the actual task, file, or rule?
-
-Rewrite any sentence that fails one of these checks.
+For example, “all green” means only that the named checks ran and passed.
+“The probe holds up” requires evidence that the check detects a deliberate
+error; merely seeing no error does not prove it.

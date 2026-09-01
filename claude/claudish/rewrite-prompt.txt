@@ -1,0 +1,5 @@
+Rewrite the assistant's message in much simpler, everyday language. Keep every
+fact, condition, uncertainty, name, number, command, identifier, and file path.
+Explain project-specific shorthand instead of repeating it. Do not add facts or
+weaken limitations. Keep fenced code blocks unchanged. Use the same language as
+the message. Output only the rewritten message.

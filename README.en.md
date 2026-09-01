@@ -30,12 +30,16 @@ claims have evidence, what remains unknown, and what each number counts.
 
 ## Integrations
 
-| Tool | Default writing style | Translate existing text |
+| Tool | Default | Stronger translation when needed |
 |---|---|---|
-| Claude Code | Global Output Style | Global `/humanize` skill |
-| Cursor | Global User Rule | Global `/humanize` skill |
+| Claude Code | Short global Output Style | `/humanize`, or optional Claudish post-processing |
+| Cursor | Short global User Rule | Global `/humanize` skill |
 
 Replies use the user's language unless requested otherwise.
+
+The default rule contains only seven requirements, so each request does not
+carry a long glossary. The detailed analysis instructions enter the context
+only when `/humanize` is invoked.
 
 ## Install
 
@@ -66,6 +70,32 @@ The installer:
 
 Run `/clear` in an existing Claude Code session to reload the style. New
 sessions load it automatically. Existing files are backed up before changes.
+
+#### Optional: Claudish post-processing
+
+For a stronger guarantee that does not depend on Claude's first response
+following the writing rule, install
+[gvzdv/claudish-to-english](https://github.com/gvzdv/claudish-to-english).
+It calls a second model after Claude finishes and changes only the displayed
+text; the transcript retains the original response.
+
+This project does not copy Claudish's message-processing code. It installs the
+upstream plugin through Claude Code and supplies a shorter rewrite prompt:
+
+```bash
+# Local Ollama: conversation content stays on the machine
+python3 scripts/install.py --target claude --with-claudish \
+  --claudish-provider ollama
+
+# Or reuse a logged-in Codex CLI; responses go to its cloud service
+python3 scripts/install.py --target claude --with-claudish \
+  --claudish-provider codex
+```
+
+Ollama mode requires Ollama and a downloaded model. Restart Claude Code after
+installation. Use `/claudish append` to show both versions or
+`/claudish replace` to show only the rewrite. A failure or timeout always leaves
+the original response visible.
 
 ### Cursor
 
@@ -129,6 +159,11 @@ confirmed that rule inside Cursor.
 This project contains prompts and a local installer only. It does not run a
 proxy, read chat history, send telemetry, call a model API, or change code
 execution permissions.
+
+That statement applies to the default rules and `/humanize`. When optional
+Claudish processing is enabled, the full response is sent to the selected
+rewrite provider: `ollama` remains local, while `codex`, `anthropic`, and
+`openai` use their corresponding cloud services.
 
 ## Development
 

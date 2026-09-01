@@ -11,6 +11,7 @@ import tempfile
 import unittest
 import urllib.parse
 from pathlib import Path
+from typing import Optional
 
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -22,10 +23,16 @@ SKILL = ROOT / "skills" / "humanize" / "SKILL.md"
 
 class InstallerTest(unittest.TestCase):
     def run_installer(
-        self, home: Path, *arguments: str, check: bool = True
+        self,
+        home: Path,
+        *arguments: str,
+        check: bool = True,
+        path_prefix: Optional[Path] = None,
     ) -> subprocess.CompletedProcess[str]:
         env = os.environ.copy()
         env["HOME"] = str(home)
+        if path_prefix is not None:
+            env["PATH"] = f"{path_prefix}{os.pathsep}{env.get('PATH', '')}"
         return subprocess.run(
             [sys.executable, str(INSTALLER), *arguments],
             cwd=ROOT,
@@ -127,7 +134,7 @@ class InstallerTest(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             home = Path(directory)
             printed = self.run_installer(home, "--print-cursor-rule").stdout
-            self.assertTrue(printed.startswith("# Translate technical work"))
+            self.assertTrue(printed.startswith("Reply in the user's language."))
             self.assertNotIn("alwaysApply:", printed)
 
             link = self.run_installer(home, "--cursor-deeplink").stdout.strip()
@@ -136,6 +143,58 @@ class InstallerTest(unittest.TestCase):
             self.assertEqual(parsed.netloc, "cursor.com")
             self.assertEqual(query["name"], ["Claude Humanize Speaking"])
             self.assertEqual(query["text"], [printed])
+
+    def test_optional_claudish_config_is_reversible(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            home = Path(directory)
+            fake_bin = home / "bin"
+            fake_bin.mkdir()
+            fake_claude = fake_bin / "claude"
+            fake_claude.write_text(
+                "#!/usr/bin/env python3\n"
+                "import json, sys\n"
+                "args = sys.argv[1:]\n"
+                "if args == ['plugin', 'marketplace', 'list', '--json']:\n"
+                "    print(json.dumps([{'repo': 'gvzdv/claudish-to-english'}]))\n"
+                "elif args == ['plugin', 'list', '--json']:\n"
+                "    print(json.dumps([{'id': "
+                "'claudish-to-english@gvzdv-plugins'}]))\n"
+                "else:\n"
+                "    raise SystemExit(2)\n",
+                encoding="utf-8",
+            )
+            fake_claude.chmod(0o755)
+
+            settings_path = home / ".claude/settings.json"
+            settings_path.parent.mkdir(parents=True)
+            settings_path.write_text(
+                json.dumps({"env": {"KEEP": "yes"}}),
+                encoding="utf-8",
+            )
+            self.run_installer(
+                home,
+                "--target",
+                "claude",
+                "--with-claudish",
+                "--claudish-provider",
+                "anthropic",
+                path_prefix=fake_bin,
+            )
+            settings = json.loads(settings_path.read_text(encoding="utf-8"))
+            self.assertEqual(settings["env"]["CLAUDISH_PROVIDER"], "anthropic")
+            prompt = Path(settings["env"]["CLAUDISH_PROMPT_FILE"])
+            self.assertTrue(prompt.exists())
+
+            self.run_installer(
+                home,
+                "--target",
+                "claude",
+                "--uninstall",
+                path_prefix=fake_bin,
+            )
+            restored = json.loads(settings_path.read_text(encoding="utf-8"))
+            self.assertEqual(restored["env"], {"KEEP": "yes"})
+            self.assertFalse(prompt.exists())
 
 
 if __name__ == "__main__":
