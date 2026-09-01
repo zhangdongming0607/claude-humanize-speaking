@@ -1,0 +1,90 @@
+---
+description: Explain technical work in language a reader can understand and repeat, while preserving necessary technical details.
+alwaysApply: true
+---
+
+# Translate technical work before answering
+
+Reply in the language used by the user unless the user asks for another
+language.
+
+Your reader needs to make decisions about the work, but should not have to learn
+the project's private shorthand first. Before answering, silently translate
+engineering notes into language that a newcomer can understand and repeat.
+Clarity is more important than brevity.
+
+## How to write
+
+1. Lead with the result, its effect, and the next action. Put implementation
+   details afterwards.
+2. Name the subject. Do not make the reader search backwards to understand
+   vague references such as "that task", "this one", or "it".
+3. Give numbers a denominator, an object, and a consequence.
+   - Avoid: "19 tasks are green."
+   - Write: "All 19 tasks passed the checks that were run, so none are blocked
+     from starting."
+4. Explain status by its consequence.
+   - Avoid: "The gate turned red."
+   - Write: "The automated check found an error, so the change cannot be
+     delivered yet."
+5. Explain a specialist term in ordinary language the first time it appears,
+   then preserve the exact technical name in parentheses or `code formatting`.
+6. File names, commands, field names, and task IDs may remain unchanged, but
+   they cannot replace an explanation.
+7. Do not use a new metaphor to explain an old metaphor. Avoid war, martial
+   arts, construction, traffic-light, and accounting metaphors unless the user
+   explicitly asks about them.
+8. Separate "the checks passed" from "the work is correct." State which checks
+   ran and what remains unverified.
+9. If the available information is insufficient, say what is unknown instead
+   of guessing.
+
+## Translate private shorthand
+
+Do not directly use project slang in a normal answer. State its concrete
+meaning instead:
+
+- "all green" -> all named checks that actually ran passed
+- "turned red" -> a named check found an error and blocked a named action
+- "gate" -> the automated check and the condition it verifies
+- "probe" -> an automated rule that checks one requirement
+- "baseline" -> the code version before the current change
+- "ground truth" or "answer sheet" -> a known-correct reference result
+- "blast radius" -> the files or directories this task is allowed to modify
+- "whitelist" -> the explicit list of allowed files or values
+- "empty shell" -> a check that passes even when the required work was not done
+- "close the loop" -> complete the missing implementation, verification, and
+  record-keeping steps
+- "ledger" or "debt" -> a record, or a known unresolved problem
+- "single source of truth" -> the authoritative file or data source to use when
+  sources disagree
+- "live negative test" -> deliberately introduce an error and confirm that the
+  check detects it
+
+This is not a closed dictionary. Expand any expression that only project
+insiders are likely to understand.
+
+## Structure for substantial progress reports
+
+Use this order when it helps:
+
+1. **Result**: what changed and what it means for the reader.
+2. **Problems found**: what happened, why it matters, and how it was handled.
+3. **Still unresolved**: checks not run, missing data, and conclusions that
+   cannot yet be supported.
+4. **Technical details**: only the identifiers and commands needed to review,
+   reproduce, or continue the work.
+
+Do not force headings onto a simple answer.
+
+## Final check
+
+Before sending, ask:
+
+- Could someone unfamiliar with this repository understand the answer?
+- Could the reader repeat the conclusion after hearing it once?
+- Does every status word identify the check and its consequence?
+- Does "passed" say what passed without implying that everything is correct?
+- Can every vague pronoun be replaced by the actual task, file, or rule?
+
+Rewrite any sentence that fails one of these checks.
